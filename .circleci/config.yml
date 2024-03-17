@@ -5,25 +5,24 @@ version: 2.1
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-  setup_desktop:
-    docker:
-      - image: circleci/desktop:ubuntu-20.04
-    steps:
-      # Pasos para la configuración de desktop, si es necesario
-      - checkout
+  # setup_desktop:
+  #   docker:
+  #     - image: circleci/desktop:ubuntu-20.04
+  #   steps:
+  #     # Pasos para la configuración de desktop, si es necesario
+  #     - checkout
 
 
   build:
     docker:
       - image: cimg/openjdk:19.0
-      - image: circleci/desktop:ubuntu-20.04
 
 
     # Add steps to the job
     # See: https://circleci.com/docs/jobs-steps/#steps-overview & https://circleci.com/docs/configuration-reference/#steps
     steps:
       # Paso para clonar el repositorio
-      #- checkout
+      - checkout
 
       # Paso para instalar IntelliJ IDEA y ejecutar el proyecto
       - run:
@@ -34,7 +33,8 @@ jobs:
             tar -zxvf intellij.tar.gz
 
             current_dir=$(pwd)
-            ./idea*/bin/idea.sh $current_dir=CalidadG5 compile
+            cd idea*/bin
+            ./idea.sh  $current_dir compile
 
 
 # Orchestrate jobs using workflows
@@ -43,7 +43,6 @@ workflows:
   buildProject: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
-      - setup_desktop
       - build:
-          requires:
-            - setup_desktop
+          docker:
+            - image: circleci/desktop:ubuntu-20.04
