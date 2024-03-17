@@ -8,6 +8,7 @@ jobs:
   build:
     docker:
       - image: cimg/openjdk:19.0
+      - image: circleci/desktop:ubuntu-20.04
 
 
     # Add steps to the job
