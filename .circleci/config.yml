@@ -25,10 +25,10 @@ jobs:
       - checkout
       - run:
           name: listar
-          command: cd J
+          command: ls -la
         
       - run:
-          name: cd
+          name: Cambiar al directorio Java/src
           command: cd Java/src
 
       # Paso para instalar IntelliJ IDEA y ejecutar el proyecto
