@@ -23,21 +23,10 @@ jobs:
     steps:
       # Paso para clonar el repositorio
       - checkout
-      - run:
-          name: listar
-          command: ls -la
-        
-      - run:
-          name: Cambiar al directorio Java/src
-          command: cd Java/src
 
+      # Paso para ejecutar la clase Main de la aplicación
       - run:
-          name: listar2
-          command: ls -la Java/src
-
-      # Paso para instalar IntelliJ IDEA y ejecutar el proyecto
-      - run:
-          command: java Java/src/Main.java
+          command: javac -cp . Main.java
 
 
 # Orchestrate jobs using workflows
