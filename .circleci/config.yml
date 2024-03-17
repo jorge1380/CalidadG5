@@ -37,7 +37,7 @@ jobs:
 
       # Paso para instalar IntelliJ IDEA y ejecutar el proyecto
       - run:
-          command: java Main.java
+          command: java Java/src/Main.java
 
 
 # Orchestrate jobs using workflows
