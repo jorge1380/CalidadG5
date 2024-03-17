@@ -25,15 +25,15 @@ jobs:
       - checkout
       - run:
           name: listar
-          command: ls -la
+          command: cd J
         
       - run:
-          name: pwd
-          command: pwd
+          name: cd
+          command: cd /Java/src
 
       # Paso para instalar IntelliJ IDEA y ejecutar el proyecto
       - run:
-          command: java -cp "/Java/src" Main.java
+          command: java Main.java
 
 
 # Orchestrate jobs using workflows
