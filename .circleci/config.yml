@@ -33,7 +33,7 @@ jobs:
 
       - run:
           name: listar2
-          command: tree -d
+          command: ls -la Java/src
 
       # Paso para instalar IntelliJ IDEA y ejecutar el proyecto
       - run:
