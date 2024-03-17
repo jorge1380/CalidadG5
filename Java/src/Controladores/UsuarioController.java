@@ -2,6 +2,7 @@ package Controladores;
 import ORIGEN.Desafio;
 import ORIGEN.Usuario;
 import  ORIGEN.Personaje;
+import Controladores.ArmaController;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -61,12 +62,12 @@ public class UsuarioController {
                     int option1 = Pantalla.pedirenteros("opcion");
                     switch (option1) {
                         case 1://cambia las armas activas por algun arma disponible en su lista de armas
-                            PersonajeController contoller = new PersonajeController();
+                            ArmaController contoller = new ArmaController();
                             personaje = contoller.cambiarArma(personaje);
                             usuario.setPersonaje(personaje);
                             break;
                         case 2://cambia la armadura activa por una de la lista de armaduras
-                            PersonajeController controller = new PersonajeController();
+                            ArmaduraController controller = new ArmaduraController();
                             personaje = controller.cambiarArmadura(personaje);
                             usuario.setPersonaje(personaje);
                             break;

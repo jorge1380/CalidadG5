@@ -12,148 +12,99 @@ import java.time.LocalDate;
 public class DesafiosController {
     private List<Desafio> listaDesafio = new ArrayList<Desafio>();
     public Desafio iniciarDesafio(Desafio desafio, List<Usuario> listausuarios) throws IOException {
-        Personaje jugador1 = desafio.getUserUno().getPersonaje();//se establece como jugador 1 el personaje del usuario desafiante
-        Personaje jugador2 = desafio.getUserDos().getPersonaje();//se establece como jugador 2 el personaje del usuario desafiado
+        Personaje jugador1 = desafio.getUserUno().getPersonaje();
+        Personaje jugador2 = desafio.getUserDos().getPersonaje();
         int saludjugador1 = jugador1.getSalud();
         int saludjugador2 = jugador2.getSalud();
         int saludEsbirrosAtq = jugador1.saludEsbirros();
         int saludEsbirrosDef = jugador2.saludEsbirros();
         int rondas=0;
         Pantalla.imprimir("El combate va a empezar...");
-        while (saludjugador1 > 0 && saludjugador2 > 0) {//mientras los dos personajes tengan vida positiva se ejecutan turnos sin parar
-            Pantalla.imprimir("Turno " + jugador1.getNombre());
-            int ataqueJugador1 = jugador1.calcularAtaque();//ataque base del jugador 1
-            ataqueJugador1 += modificadorataque(desafio, jugador1);// cantidad total de ataque del jugador 1
-            ataqueJugador1 = potencialAtaque(ataqueJugador1);//Se calcula la cantidad de ataques que han tenido éxito del jugador 1
-            int defensaJugador2 = jugador2.calcularDefensa();//defensa base del jugador 2
-            defensaJugador2 += modificadordefensa(desafio, jugador2);//defensa total del jugador 2
-            defensaJugador2 = potencialDefensa(defensaJugador2);//Se calcula la cantidad de defensas que han tenido éxito del jugador
-            if (ataqueJugador1 >= defensaJugador2) {//si hay más ataques del jugador 1 que defensas del jugador 2 se lleva a cabo el ataque.
-                if (jugador1.getClass() == Vampiro.class) {//si el atacante es un vampiro aumentan sus puntos de sangre
-                    ((Vampiro) jugador1).setPuntosSangre(((Vampiro) jugador1).getPuntosSangre() + 4);
-                }
-                if (saludEsbirrosDef > 0) {//si los esbirros todavía tienen salud se les ataca a ellos
-                    saludEsbirrosDef--;
-                } else {//en caso de que no queden esbirros vivos se ataca al personaje
-                    if (jugador2.getClass() == Licantropo.class && ((Licantropo) jugador2).getRabia() < 3) {//si el defensor es un licántropo con rabia menor que tres se le suma uno.
-                        ((Licantropo) jugador2).setRabia(((Licantropo) jugador2).getRabia() + 1);
-                    }
-                    if (jugador2.getClass() == Cazador.class && ((Cazador) jugador2).getVoluntad() > 0) {//si el defensor es un cazador con voluntad mayor que cero, se le resta uno.
-                        ((Cazador) jugador2).setVoluntad(((Cazador) jugador2).getVoluntad() - 1);
-                    }
-                    saludjugador2--;
-                }
-            }
-            Pantalla.imprimir("Turno " + jugador2.getNombre());//se repite la misma mecánica invirtiendo los roles de atacante y defensor entre jugador 1 y jugador 2
-            int ataqueJugador2 = jugador2.calcularAtaque();
-            ataqueJugador2 += modificadorataque(desafio, jugador2);
-            ataqueJugador2 = potencialAtaque(ataqueJugador2);
-            int defensaJugador1 = jugador1.calcularDefensa();
-            defensaJugador1 += modificadordefensa(desafio, jugador1);
-            defensaJugador1 = potencialDefensa(defensaJugador1);
-            if (ataqueJugador2 >= defensaJugador1) {
-                if (jugador2.getClass() == Vampiro.class) {
-                    ((Vampiro) jugador2).setPuntosSangre(((Vampiro) jugador2).getPuntosSangre() + 4);
-                }
-                if (saludEsbirrosAtq > 0) {
-                    saludEsbirrosAtq--;
-                }
-            } else {
-                if (jugador1.getClass() == Licantropo.class && ((Licantropo) jugador1).getRabia() < 3) {
-                    ((Licantropo) jugador1).setRabia(((Licantropo) jugador1).getRabia() + 1);
-                }
-                if (jugador1.getClass() == Cazador.class && ((Cazador) jugador1).getVoluntad() > 0) {
-                    ((Cazador) jugador1).setVoluntad(((Cazador) jugador1).getVoluntad() - 1);
-                }
-                saludjugador1--;
-            }
+    
+        while (saludjugador1 > 0 && saludjugador2 > 0) {
+            saludjugador1 = realizarTurno(desafio, jugador1, jugador2, saludjugador1, saludEsbirrosDef);
+            saludjugador2 = realizarTurno(desafio, jugador2, jugador1, saludjugador2, saludEsbirrosAtq);
             Pantalla.imprimir("Fin ronda " + rondas + ". Vida " + jugador1.getNombre() + ": " + saludjugador1 + ". Vida " + jugador2.getNombre() + ": " + saludjugador2 + ".");
             rondas++;
         }
-        desafio.getUserUno().setPersonaje(jugador1);
-        desafio.getUserDos().setPersonaje(jugador2);
-        if(saludjugador1 <= 0 && saludjugador2 <= 0){//si los dos personajes se han quedado sin vida a la vez, es empate
-            desafio.setGanador(0);
-            Pantalla.imprimir("Empate");
+    
+        return guardarDesafio(desafio, listausuarios, jugador1, jugador2, saludjugador1, saludjugador2, rondas);
+    }
+    
+    private int realizarTurno(Desafio desafio, Personaje atacante, Personaje defensor, int saludAtacante, int saludEsbirrosDef) {
+        Pantalla.imprimir("Turno " + atacante.getNombre());
+        int ataqueAtacante = calcularAtaque(desafio, atacante);
+        int defensaDefensor = calcularDefensa(desafio, defensor);
+        if (ataqueAtacante >= defensaDefensor) {
+            saludAtacante = realizarAtaque(atacante, defensor, saludAtacante, saludEsbirrosDef);
         }
-        else if (saludjugador1 <= 0){//pierde el jugador 1 y se paga al jugador 2
-            desafio.setGanador(2);
-            Pantalla.imprimir("Jugador 2 ganador");
+        return saludAtacante;
+    }
+    
+    private int calcularAtaque(Desafio desafio, Personaje jugador) {
+        int ataqueJugador = jugador.calcularAtaque();
+        ataqueJugador += calcularModificadorCombate(desafio, jugador,true);
+        return calcularPotencial(ataqueJugador);
+    }
+    
+    private int calcularDefensa(Desafio desafio, Personaje jugador) {
+        int defensaJugador = jugador.calcularDefensa();
+        defensaJugador += calcularModificadorCombate(desafio, jugador,false);
+        return calcularPotencial(defensaJugador);
+    }
+    
+    private int realizarAtaque(Personaje atacante, Personaje defensor, int saludAtacante, int saludEsbirrosDef) {
+        int ataque = atacante.calcularAtaque();
+        int defensa = defensor.calcularDefensa();
+        int daño = ataque - defensa;
+        if (daño > 0) {
+            saludAtacante -= daño;
         }
-        else if (saludjugador2 <= 0){//pierde el jugador 2 y se paga al jugador 1
+        else {
+            saludEsbirrosDef -= daño;
+        }
+        return saludAtacante;
+    }
+    
+    private Desafio guardarDesafio(Desafio desafio, List<Usuario> listausuarios, Personaje jugador1, Personaje jugador2, int saludjugador1, int saludjugador2, int rondas) throws IOException {
+        if (saludjugador1 > 0) {
             desafio.setGanador(1);
-            Pantalla.imprimir("Jugador 1 ganador");
+            desafio.getUserUno().getPersonaje().setOro(desafio.getUserUno().getPersonaje().getOro() + desafio.getOroApostado());
+            desafio.getUserDos().getPersonaje().setOro(desafio.getUserDos().getPersonaje().getOro() - desafio.getOroApostado());
         }
-        this.pagarGanador(desafio,listausuarios);
-        UsuarioController usuarioController = new UsuarioController();
-        Usuario usuario1 = usuarioController.seleccionarUsuario(listausuarios, desafio.getUserUno().getNombre());
-        Usuario usuario2 = usuarioController.seleccionarUsuario(listausuarios, desafio.getUserDos().getNombre());
-
-        //devuelve los personajes al estado original
-        if (usuario1.getPersonaje().getClass() == Licantropo.class){
-            ((Licantropo)usuario1.getPersonaje()).setRabia(0);
+        else {
+            desafio.setGanador(2);
+            desafio.getUserUno().getPersonaje().setOro(desafio.getUserUno().getPersonaje().getOro() - desafio.getOroApostado());
+            desafio.getUserDos().getPersonaje().setOro(desafio.getUserDos().getPersonaje().getOro() + desafio.getOroApostado());
         }
-        if (usuario1.getPersonaje().getClass() == Cazador.class){
-            ((Cazador)usuario1.getPersonaje()).setVoluntad(3);
-        }
-        if (usuario2.getPersonaje().getClass() == Licantropo.class){
-            ((Licantropo)usuario2.getPersonaje()).setRabia(0);
-        }
-        if (usuario2.getPersonaje().getClass() == Cazador.class){
-            ((Cazador)usuario2.getPersonaje()).setVoluntad(3);
-        }
-        //se guarda el desafío en la lista de completados de ambos jugadores
-        desafio.getUserDos().setPersonaje(jugador2);
-        desafio.getUserUno().setPersonaje(jugador1);
         desafio.setFecha(LocalDate.now());
         desafio.setRondas(rondas);
-        desafio.setOroGanado(desafio.getOroApostado());
-        guardardesafiocomp(listaDesafio, desafio);
+        guardardesafiocomp(listaDesafio,desafio);
         return desafio;
     }
 
-    public int modificadorataque(Desafio desafio, Personaje jugador){//se aplican las fortalezas del combate
-        int modififcador = 0;
+    public int calcularModificadorCombate(Desafio desafio, Personaje jugador, boolean esAtaque) {
+        int modificador = 0;
         switch (desafio.getModificador()) {
             case 1:
-                if (jugador.getClass() == Cazador.class) {
-                    modififcador = 1;
+                if ((esAtaque && jugador instanceof Cazador) || (!esAtaque && jugador instanceof Vampiro)) {
+                    modificador = 1;
                 }
                 break;
             case 2:
-                if (jugador.getClass() == Licantropo.class) {
-                    modififcador = 1;
+                if ((esAtaque && jugador instanceof Licantropo) || (!esAtaque && jugador instanceof Cazador)) {
+                    modificador = 1;
                 }
                 break;
             case 3:
-                if (jugador.getClass() == Vampiro.class) {
-                    modififcador = 1;
-                    break;
-                }
-        }
-        return modififcador;
-    }
-    public int modificadordefensa(Desafio desafio, Personaje jugador){//se aplican las debilidades del combate
-        int modififcador = 0;
-        switch (desafio.getModificador()) {
-            case 1:
-                if (jugador.getClass() == Vampiro.class) {
-                    modififcador = 1;
+                if ((esAtaque && jugador instanceof Vampiro) || (!esAtaque && jugador instanceof Licantropo)) {
+                    modificador = 1;
                 }
                 break;
-            case 2:
-                if (jugador.getClass() == Cazador.class) {
-                    modififcador = 1;
-                }
-                break;
-            case 3:
-                if (jugador.getClass() == Licantropo.class) {
-                    modififcador = 1;
-                    break;
-                }
         }
-        return modififcador;
+        return modificador;
     }
+
     public void guardardesafiocomp(List<Desafio>lista, Desafio desafio) throws IOException {//guarda en un archivo los desafíos completados
         File file = new File("listaDesafiosCompletados.dat");
         lista.add(desafio);
@@ -287,49 +238,28 @@ public class DesafiosController {
             Pantalla.imprimir("No hay desafíos por validar.");
         }
     }
-    public void pagarGanador(Desafio d, List<Usuario> listausuarios){
-        String usuario = new String();
-        String usuario2 = new String();
-        if (d.getGanador() == 1){
-            usuario = d.getUserUno().getNombre();
-            usuario2 = d.getUserDos().getNombre();
-        }
-        if (d.getGanador() == 2) {
-            usuario = d.getUserDos().getNombre();
-            usuario2 = d.getUserUno().getNombre();
-        }
+
+    
+    public void pagarGanador(String nombreGanador, int cantidadGanada, List<Usuario> listausuarios) {
         UsuarioController ucontroller = new UsuarioController();
-        Usuario usu = ucontroller.seleccionarUsuario(listausuarios, usuario);
-        Usuario usu2 = ucontroller.seleccionarUsuario(listausuarios, usuario2);
-        if (usu != null){
-            usu.getPersonaje().setOro(usu.getPersonaje().getOro() + d.getOroApostado());
-        }
-        if (usu2 != null) {
-            usu2.getPersonaje().setOro(usu2.getPersonaje().getOro() - d.getOroApostado());
+        Usuario ganador = ucontroller.seleccionarUsuario(listausuarios, nombreGanador);
+        if (ganador != null) {
+            ganador.getPersonaje().setOro(ganador.getPersonaje().getOro() + cantidadGanada);
         }
     }
-    public int potencialAtaque(int ataque) {//se ingresa el valor de ataque ya calculado
+
+
+
+    public int calcularPotencial(int valor) { //se calcula el potencial de un personaje
         int exito = 0;
-        for (int i = 1; i <= ataque; i++) {//se generan tantos números entre 1 y 6 como ataque se pase por parámetro
+        for (int i = 1; i <= valor; i++) { //se generan tantos números entre 1 y 6 como el valor del ataque o defensa
             Random random = new Random();
             int rango = random.nextInt(7);
-            if (rango == 5 || rango == 6) {//se seleccionan los 5 y 6
+            if (rango == 5 || rango == 6) { //si el número es 5 o 6, se considera un éxito
                 exito++;
             }
         }
-        return exito;//devuelve el número de ataques que realiza
+        return exito; //se devuelve el número de éxitos
     }
-
-    public int potencialDefensa(int defensa) { //se ingresa el valor de ataque ya calculado
-        int exito = 0;
-        for (int i = 1; i <= defensa; i++) {//se generan tantos números entre 1 y 6 como defensa se pase por parámetro
-            Random random = new Random();
-            int rango = random.nextInt(7);
-            if (rango == 5 || rango == 6) {//se seleccionan los 5 y 6
-                exito++;
-            }
-        }
-        return exito;//devuelve el número de defensas que realiza
-    }
-
+    
 }
