@@ -26,15 +26,7 @@ jobs:
 
       # Paso para instalar IntelliJ IDEA y ejecutar el proyecto
       - run:
-          name: Run IntelliJ IDEA build
-          command: |
-            # Descargar e instalar IntelliJ IDEA (reemplaza la URL con la versión que necesites)
-            curl -L -o intellij.tar.gz https://download.jetbrains.com/idea/ideaIC-2021.3.1.tar.gz
-            tar -zxvf intellij.tar.gz
-
-            current_dir=$(pwd)
-            cd idea*/bin
-            ./idea.sh -Djava.awt.headless=true $current_dir compile
+          command: java CalidadG5.java
 
 
 # Orchestrate jobs using workflows
