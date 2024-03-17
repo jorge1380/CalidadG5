@@ -23,6 +23,13 @@ jobs:
     steps:
       # Paso para clonar el repositorio
       - checkout
+      - run:
+          name: listar
+          command: ls -la
+        
+      - run:
+          name: pwd
+          command: pwd
 
       # Paso para instalar IntelliJ IDEA y ejecutar el proyecto
       - run:
