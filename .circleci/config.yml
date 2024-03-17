@@ -13,11 +13,20 @@ jobs:
     # Add steps to the job
     # See: https://circleci.com/docs/jobs-steps/#steps-overview & https://circleci.com/docs/configuration-reference/#steps
     steps:
+      # Paso para clonar el repositorio
       - checkout
+
+      # Paso para instalar IntelliJ IDEA y ejecutar el proyecto
       - run:
-          name: Install Maven
+          name: Run IntelliJ IDEA build
           command: |
-            sudo apt-get update && sudo apt-get install -y maven
+            # Descargar e instalar IntelliJ IDEA (reemplaza la URL con la versión que necesites)
+            curl -L -o intellij.tar.gz https://download.jetbrains.com/idea/ideaIC-2021.3.1.tar.gz
+            tar -zxvf intellij.tar.gz
+
+            current_dir=$(pwd)
+            ./idea*/bin/idea.sh $current_dir=CalidadG5 compile
+
       - run: mvn -B clean package
 
 # Orchestrate jobs using workflows
