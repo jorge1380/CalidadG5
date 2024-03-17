@@ -34,7 +34,7 @@ jobs:
 
             current_dir=$(pwd)
             cd idea*/bin
-            ./idea.sh  $current_dir compile
+            ./idea.sh -Djava.awt.headless=true $current_dir compile
 
 
 # Orchestrate jobs using workflows
@@ -43,6 +43,4 @@ workflows:
   buildProject: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
-      - build:
-          docker:
-            - image: circleci/desktop:ubuntu-20.04
+      - build
