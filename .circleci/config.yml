@@ -31,6 +31,10 @@ jobs:
           name: Cambiar al directorio Java/src
           command: cd Java/src
 
+      - run:
+          name: listar2
+          command: ls -la
+
       # Paso para instalar IntelliJ IDEA y ejecutar el proyecto
       - run:
           command: java Main.java
