@@ -7,7 +7,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: cimg/openjdk:17.0
+      - image: cimg/openjdk:19.0
 
 
     # Add steps to the job
@@ -18,13 +18,12 @@ jobs:
           name: Install Maven
           command: |
             sudo apt-get update && sudo apt-get install -y maven
-            mvn --version  # Verifica que Maven se haya instalado correctamente
       - run: mvn -B clean package
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
 workflows:
-  build: # This is the name of the workflow, feel free to change it to better match your workflow.
+  buildProject: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
       - build
