@@ -27,7 +27,6 @@ jobs:
             current_dir=$(pwd)
             ./idea*/bin/idea.sh $current_dir=CalidadG5 compile
 
-      - run: mvn -B clean package
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
