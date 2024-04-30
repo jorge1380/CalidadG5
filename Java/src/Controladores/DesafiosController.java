@@ -261,5 +261,9 @@ public class DesafiosController {
         }
         return exito; //se devuelve el número de éxitos
     }
-    
+
+    public List<Desafio> getListaDesafio() throws IOException, ClassNotFoundException {
+        cargarDatos();
+        return listaDesafio;
+    }
 }

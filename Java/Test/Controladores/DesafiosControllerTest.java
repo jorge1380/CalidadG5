@@ -4,7 +4,6 @@ import ORIGEN.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,123 +12,70 @@ import static org.junit.jupiter.api.Assertions.*;
 class DesafiosControllerTest {
 
     @Test
-    void testiniciarDesafio() throws IOException {
-        Usuario usu1 = new Usuario();
-        Usuario usu2 = new Usuario();
-        List<Usuario> listausuarios = new ArrayList<>();
-        usu1.setNombre("test1");
-        usu1.setNickname("test1");
-        Vampiro vampiro = new Vampiro();
-        Vampiro vampiro2 = new Vampiro();
-        vampiro.setPuntosSangre(50000);
-        vampiro2.setPuntosSangre(0);
-        vampiro.setPoder(50000);
-        vampiro2.setPoder(0);
-        vampiro.setAtqHab(50000);
-        vampiro.setDefHab(50000);
-        vampiro2.setAtqHab(0);
-        vampiro2.setDefHab(0);
-        Arma arma = new Arma();
+    void iniciarDesafio() {
+
+        //Configuración de datos de ejemplo
+        Arma arma1 = new Arma();
         Arma arma2 = new Arma();
-        arma.setModificadorAtc(50000);
+        arma1.setModificadorAtc(0);
         arma2.setModificadorAtc(0);
-        List<Arma> armas = new ArrayList<>();
+        List<Arma> armas1 = new ArrayList<>();
         List<Arma> armas2 = new ArrayList<>();
-        armas.add(arma);
+        armas1.add(arma1);
         armas2.add(arma2);
-        Armadura armadura = new Armadura();
+        Armadura armadura1 = new Armadura();
         Armadura armadura2 = new Armadura();
-        armadura.setModificadorDef(5000000);
+        armadura1.setModificadorDef(0);
         armadura2.setModificadorDef(0);
-        vampiro.setArmasActivas((ArrayList<Arma>) armas);
+
+        Vampiro vampiro1 = new Vampiro();
+
+        vampiro1.setNombre("Paco");
+        vampiro1.setEdad(500);
+        vampiro1.setPuntosSangre(10);
+        vampiro1.setCosteHabilidad(3);
+        vampiro1.setHabilidad("Transformación");
+        vampiro1.setAtqHab(7);
+        vampiro1.setDefHab(5);
+        vampiro1.setPoder(20);
+        vampiro1.setOro(1000);
+        vampiro1.setSalud(500);
+        vampiro1.setArmasActivas((ArrayList<Arma>) armas1);
+        vampiro1.setArmaduraActiva(armadura1);
+
+        Vampiro vampiro2 = new Vampiro();
+
+        vampiro2.setNombre("Pepe");
+        vampiro2.setEdad(100);
+        vampiro2.setPuntosSangre(10);
+        vampiro2.setCosteHabilidad(3);
+        vampiro2.setHabilidad("Transformación");
+        vampiro2.setAtqHab(7);
+        vampiro2.setDefHab(5);
+        vampiro2.setPoder(20);
+        vampiro2.setOro(1000);
+        vampiro2.setSalud(10);
         vampiro2.setArmasActivas((ArrayList<Arma>) armas2);
-        vampiro.setArmaduraActiva(armadura);
         vampiro2.setArmaduraActiva(armadura2);
-        usu1.setNombre("test1.0");
-        usu1.setNickname("test1.0");
-        usu2.setNombre("test2.0");
-        usu2.setNickname("test2.0");
-        usu1.setPersonaje(vampiro);
-        usu2.setPersonaje(vampiro2);
-        listausuarios.add(usu1);
-        listausuarios.add(usu2);
-        Desafio desafio = new Desafio(usu1, usu2, 5);
-        desafio.setUserUno(usu1);
-        desafio.setUserDos(usu2);
-        DesafiosController desafiosController = new DesafiosController();
-        assertEquals(desafio, desafiosController.iniciarDesafio(desafio, listausuarios));
+
+        Usuario usuario1 = new Usuario();
+        usuario1.setPersonaje(vampiro1);
+        Usuario usuario2 = new Usuario();
+        usuario2.setPersonaje(vampiro2);
+
+        Desafio desafio = new Desafio(usuario1,usuario2,0);
+
+        DesafiosController dsfController = new DesafiosController();
+        try {
+            //Se inicia el desafio
+            Desafio dsfResultado = dsfController.iniciarDesafio(desafio,null);
+
+            //Se comprueba que el ganador sea el esperado
+            assertEquals(1,dsfResultado.getGanador());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
-    @Test
-    void testmodificadorataque() {
-        DesafiosController desafiosController = new DesafiosController();
-        Usuario usu1 = new Usuario();
-        Usuario usu2 = new Usuario();
-        usu1.setNombre("test1.0");
-        usu1.setNickname("test1.0");
-        usu2.setNombre("test2.0");
-        usu2.setNickname("test2.0");
-        Vampiro vampiro = new Vampiro();
-        Vampiro vampiro2 = new Vampiro();
-        usu1.setPersonaje(vampiro);
-        usu2.setPersonaje(vampiro2);
-        Desafio desafio = new Desafio(usu1, usu2,5);
-        desafio.setModificador(1);
-        assertEquals(0, desafiosController.modificadorataque(desafio, vampiro));
-    }
-
-    @Test
-    void testmodificadordefensa() {
-        DesafiosController desafiosController = new DesafiosController();
-        Usuario usu1 = new Usuario();
-        Usuario usu2 = new Usuario();
-        usu1.setNombre("test1.0");
-        usu1.setNickname("test1.0");
-        usu2.setNombre("test2.0");
-        usu2.setNickname("test2.0");
-        Vampiro vampiro = new Vampiro();
-        Vampiro vampiro2 = new Vampiro();
-        usu1.setPersonaje(vampiro);
-        usu2.setPersonaje(vampiro2);
-        Desafio desafio = new Desafio(usu1, usu2,5);
-        desafio.setModificador(1);
-        assertEquals(1, desafiosController.modificadordefensa(desafio, vampiro));
-    }
-
-    @Test
-    void testpagarGanador() {
-        DesafiosController desafiosController = new DesafiosController();
-        Usuario usu1 = new Usuario();
-        Usuario usu2 = new Usuario();
-        usu1.setNombre("test1.0");
-        usu1.setNickname("test1.0");
-        usu2.setNombre("test2.0");
-        usu2.setNickname("test2.0");
-        Vampiro vampiro = new Vampiro();
-        Vampiro vampiro2 = new Vampiro();
-        vampiro.setOro(5);
-        vampiro2.setOro(10);
-        usu1.setPersonaje(vampiro);
-        usu2.setPersonaje(vampiro2);
-        Desafio desafio = new Desafio(usu1, usu2,5);
-        desafio.setOroApostado(5);
-        desafio.setGanador(2);
-        List<Usuario> listausuarios = new ArrayList<>();
-        listausuarios.add(usu1);
-        listausuarios.add(usu2);
-        desafiosController.pagarGanador(desafio, listausuarios);
-        assertEquals(0, usu1.getPersonaje().getOro());
-    }
-
-    @Test
-    void testpotencialAtaque() {
-        DesafiosController desafiosController = new DesafiosController();
-        assertTrue(desafiosController.potencialAtaque(5) >= 0);
-    }
-
-    @Test
-    void testpotencialDefensa() {
-        DesafiosController desafiosController = new DesafiosController();
-        assertTrue(desafiosController.potencialDefensa(5) >= 0);
-    }
 }

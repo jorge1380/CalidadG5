@@ -256,7 +256,6 @@ public class UsuarioController {
                 }
                 else{
                     Pantalla.imprimir("No se puede desafiar al usuario "+ a.getNickname()+ " porque no tiene personajes");
-                    encontrado=false;
                 }
             }
         }
