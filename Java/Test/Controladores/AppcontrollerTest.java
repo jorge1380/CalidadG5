@@ -1,12 +1,11 @@
 package Controladores;
 
+import ORIGEN.Operador;
 import ORIGEN.Usuario;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -71,4 +70,57 @@ class AppcontrollerTest {
             throw new RuntimeException(e);
         }
     }
+
+    @Test
+    void guardarDatos(){
+        Appcontroller appController = new Appcontroller();
+        try {
+            appController.guardarDatos();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        List<Usuario> usuarios = appController.getUsuarios();
+        List<Usuario> lista = new ArrayList<Usuario>();
+        try {
+            File file = new File("listaUsuarios.dat");
+            if (!file.exists()){
+                file.createNewFile();
+            }
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream("listaUsuarios.dat"));
+            Object aux = ois.readObject();
+            while (aux!=null) {
+                if (aux instanceof Operador)
+                    lista.add((Operador) aux);
+                else if (aux instanceof Usuario)
+                    lista.add((Usuario) aux);
+                aux = ois.readObject();
+            }
+            ois.close();
+        }
+        catch (EOFException e1)
+        {
+            //Fin del fichero.
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        if (lista.size() == usuarios.size()){
+            for (int i = 0; i < lista.size(); i++) {
+                assertEquals(lista.get(i).getNombre(),usuarios.get(i).getNombre());
+                assertEquals(lista.get(i).getContrasena(),usuarios.get(i).getContrasena());
+                assertEquals(lista.get(i).getPersonaje(),usuarios.get(i).getPersonaje());
+                assertEquals(lista.get(i).getNickname(),usuarios.get(i).getNickname());
+                assertEquals(lista.get(i).isBaneado(),usuarios.get(i).isBaneado());
+                assertEquals(lista.get(i).getDesafio(),usuarios.get(i).getDesafio());
+            }
+        }else{
+            fail("Las listas no son iguales");
+        }
+
+    }
+
+
 }

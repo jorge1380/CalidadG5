@@ -3,7 +3,7 @@ package Controladores;
 import ORIGEN.*;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,5 +77,53 @@ class DesafiosControllerTest {
         }
 
     }
+    @Test
+    void guardarDesafio() {
+        DesafiosController desafios = new DesafiosController();
+        Usuario usuario1 = new Usuario();
+        Usuario usuario2 = new Usuario();
 
+
+        Desafio desafio = new Desafio(usuario1,usuario2,0);
+        List<Desafio> lista = new ArrayList<>();
+        lista.add(desafio);
+        try{
+            desafios.guardarDesafios(lista);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        List<Desafio> lista2 = new ArrayList<Desafio>();
+            try {
+                File file = new File("listaDesafios.dat");
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+                ObjectInputStream ois = new ObjectInputStream(new FileInputStream("listaDesafios.dat"));
+                Object aux = ois.readObject();
+                while (aux != null) {
+                    if (aux instanceof Desafio)
+                        lista.add((Desafio) aux);
+                    aux = ois.readObject();
+                }
+                ois.close();
+            } catch (EOFException e1) {
+                //Fin del fichero.
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            if (lista.size()== lista2.size()){
+                for (int i = 0; i < lista.size(); i++) {
+                    assertEquals(lista.get(i),lista2.get(i));
+                }
+            }
+            else{
+                fail("Las listas no son iguales");
+            }
+    }
 }
+

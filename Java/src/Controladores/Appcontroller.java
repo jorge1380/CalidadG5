@@ -123,7 +123,7 @@ public class Appcontroller{
         }
     }
 
-    private List<Usuario>cargarUsuarios() throws IOException,ClassNotFoundException {
+    private List<Usuario> cargarUsuarios() throws IOException,ClassNotFoundException {
         List<Usuario> lista = new ArrayList<Usuario>();
         try {
             File file = new File("listaUsuarios.dat");
