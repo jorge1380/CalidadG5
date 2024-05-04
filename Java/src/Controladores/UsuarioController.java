@@ -1,5 +1,6 @@
 package Controladores;
 import ORIGEN.Desafio;
+import ORIGEN.Operador;
 import ORIGEN.Usuario;
 import  ORIGEN.Personaje;
 import Controladores.ArmaController;
@@ -32,8 +33,9 @@ public class UsuarioController {
             Pantalla.imprimir("  4.Lanzar desafio");
             Pantalla.imprimir("  5.Resultados combates anteriores");
             Pantalla.imprimir("  6.Ver Ranking global");
-            Pantalla.imprimir("  7.Darse de baja");
-            Pantalla.imprimir("  8.Cerrar sesion");
+            Pantalla.imprimir("  7.Modificar Info");
+            Pantalla.imprimir("  8.Darse de baja");
+            Pantalla.imprimir("  9.Cerrar sesion");
             int option = Pantalla.pedirenteros("Opcion");
             switch (option) {
                 case 1://crear personaje
@@ -91,12 +93,15 @@ public class UsuarioController {
                 case 6://Ver ranking
                     verRanking();
                     break;
-                case 7://Dar de baja usuario
+                case 7://Modificar info
+                    cambiarInfo(usuario);
+                    break;
+                case 8://Dar de baja usuario
                     usuario = null;
                     Pantalla.imprimir("Se elimino el usuario");
                     salir = true;
                     break;
-                case 8://cerrar sesion
+                case 9://cerrar sesion
                     salir = true;
                     break;
             }
@@ -107,7 +112,7 @@ public class UsuarioController {
 
 
 
-    public List<Usuario> menuOperador(List<Usuario> listaUsuarios, ORIGEN.Operador usu) throws IOException, ClassNotFoundException {//muestra el menu para los operadores
+    public List<Usuario> menuOperador(List<Usuario> listaUsuarios, Operador usu) throws IOException, ClassNotFoundException {//muestra el menu para los operadores
         boolean salir = false;
         while (!salir){
             Pantalla.imprimir(" ------MENU OPERADOR------");
@@ -261,6 +266,39 @@ public class UsuarioController {
         }
         if (!encontrado){
             Pantalla.imprimir("El usuario no existe");
+        }
+    }
+
+
+
+    public void cambiarInfo(Usuario user) {
+        boolean salir = false;
+        while (!salir) {
+            Pantalla.imprimir("1. Cambiar nombre");
+            Pantalla.imprimir("2. Cambiar nick");
+            Pantalla.imprimir("3. Cambiar contraseña");
+            Pantalla.imprimir("4. Volver al menu");
+            int numInfo = Pantalla.pedirenteros("Que deseas cambiar?");
+            String nuevaInfo = null;
+            if (numInfo < 3 && numInfo > 0) {
+                nuevaInfo = Pantalla.pedircadena("Introduce la nueva informacion");
+            }
+            switch (numInfo) {
+                case 1:
+                    user.setNombre(nuevaInfo);
+                    break;
+                case 2:
+                    user.setNickname(nuevaInfo);
+                    break;
+                case 3:
+                    user.setContrasena(nuevaInfo);
+                    break;
+                case 4:
+                    salir = true;
+                    break;
+                default:
+                    Pantalla.imprimir("Esa no es una opcion valida");
+            }
         }
     }
 }

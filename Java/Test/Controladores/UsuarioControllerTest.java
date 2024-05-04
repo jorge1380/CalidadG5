@@ -6,10 +6,7 @@ import ORIGEN.Usuario;
 import ORIGEN.Vampiro;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,5 +48,25 @@ class UsuarioControllerTest {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Test
+    void changeInfo() {
+        Appcontroller appController = new Appcontroller();
+        List<Usuario> usuariosLista = appController.getUsuarios();
+
+        //Se crean los datos de ejemplos
+        Usuario usuario1 = new Usuario();
+        usuario1.setNickname("Roberto");
+        usuariosLista.add(usuario1);
+
+        //Se redirige la entrada estándar
+        ByteArrayInputStream in = new ByteArrayInputStream("2\r\nJuan\n4\n".getBytes());
+        System.setIn(in);
+
+        UsuarioController usrController = new UsuarioController();
+        usrController.cambiarInfo(usuario1);
+        //Se comprueba que el desafío envíado haya sido guardado
+        assertEquals("Juan",usuario1.getNickname());
     }
 }
