@@ -33,8 +33,9 @@ public class UsuarioController {
             Pantalla.imprimir("  4.Lanzar desafio");
             Pantalla.imprimir("  5.Resultados combates anteriores");
             Pantalla.imprimir("  6.Ver Ranking global");
-            Pantalla.imprimir("  7.Darse de baja");
-            Pantalla.imprimir("  8.Cerrar sesion");
+            Pantalla.imprimir("  7.Modificar info");
+            Pantalla.imprimir("  8.Darse de baja");
+            Pantalla.imprimir("  9.Cerrar sesion");
             int option = Pantalla.pedirenteros("Opcion");
             switch (option) {
                 case 1://crear personaje
@@ -92,12 +93,15 @@ public class UsuarioController {
                 case 6://Ver ranking
                     verRanking();
                     break;
-                case 7://Dar de baja usuario
+                case 7:
+                    cambiarInfo(usuario,usuarios);
+                    break;
+                case 8://Dar de baja usuario
                     usuario = null;
                     Pantalla.imprimir("Se elimino el usuario");
                     salir = true;
                     break;
-                case 8://cerrar sesion
+                case 9://cerrar sesion
                     salir = true;
                     break;
             }
@@ -263,6 +267,65 @@ public class UsuarioController {
         if (!encontrado){
             Pantalla.imprimir("El usuario no existe");
         }
+    }
+
+    public void cambiarInfo(Usuario user, List<Usuario> listaUsuarios) {
+        boolean salir = false;
+        while (!salir) {
+            Pantalla.imprimir("1. Cambiar nombre");
+            Pantalla.imprimir("2. Cambiar nick");
+            Pantalla.imprimir("3. Cambiar contraseña");
+            Pantalla.imprimir("4. Volver al menu");
+            int numInfo = Pantalla.pedirenteros("Que deseas cambiar?");
+            String nuevaInfo = null;
+            if (numInfo < 3 && numInfo > 0) {
+                nuevaInfo = Pantalla.pedircadena("Introduce la nueva informacion");
+            }
+            switch (numInfo) {
+                case 1:
+                    if(infoExistente(nuevaInfo,listaUsuarios,"nombre")){ //En caso de ya existir...
+                        Pantalla.imprimir("Ese nombre ya existe!");
+                    }else {
+                        user.setNombre(nuevaInfo);
+                        Pantalla.imprimir("El nombre fue cambiado con exito");
+                    }
+                    break;
+                case 2:
+                    if(infoExistente(nuevaInfo,listaUsuarios,"nick")){ //En caso de ya existir...
+                        Pantalla.imprimir("Ese nickname ya existe!");
+                    }else {
+                        user.setNickname(nuevaInfo);
+                        Pantalla.imprimir("El nick fue cambiado con exito");
+                    }
+                    break;
+                case 3:
+                    user.setContrasena(nuevaInfo);
+                    Pantalla.imprimir("La contraseña fue cambiada con exito");
+                    break;
+                case 4:
+                    salir = true;
+                    break;
+                default:
+                    Pantalla.imprimir("Esa no es una opcion valida");
+            }
+        }
+    }
+
+    private boolean infoExistente(String nuevaInfo, List<Usuario> listaUsuarios, String variableAIgualar){
+        if (variableAIgualar.equals("nick")){
+            for(Usuario i : listaUsuarios){
+                if (i.getNickname().equals(nuevaInfo)){
+                    return true;
+                }
+            }
+        }else if(variableAIgualar.equals("nombre")){
+            for(Usuario i : listaUsuarios){
+                if (i.getNombre().equals(nuevaInfo)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
 

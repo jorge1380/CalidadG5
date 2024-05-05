@@ -55,4 +55,24 @@ class UsuarioControllerTest {
         }
 
     }
+
+    @Test
+    void changeInfo() {
+        Appcontroller appController = new Appcontroller();
+        List<Usuario> usuariosLista = appController.getUsuarios();
+
+        //Se crean los datos de ejemplos
+        Usuario usuario1 = new Usuario();
+        usuario1.setNickname("Roberto");
+        usuariosLista.add(usuario1);
+
+        //Se redirige la entrada estándar
+        ByteArrayInputStream in = new ByteArrayInputStream("2\r\nJuan\n4\n".getBytes());
+        System.setIn(in);
+
+        UsuarioController usrController = new UsuarioController();
+        usrController.cambiarInfo(usuario1,usuariosLista);
+        //Se comprueba que el desafío envíado haya sido guardado
+        assertEquals("Juan",usuario1.getNickname());
+    }
 }
