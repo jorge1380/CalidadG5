@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/PracticaMP.iml" filepath="$PROJECT_DIR$/PracticaMP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CalidadMaven.iml" filepath="$PROJECT_DIR$/CalidadMaven.iml" />
     </modules>
   </component>
 </project>
